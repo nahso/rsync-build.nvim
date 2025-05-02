@@ -7,7 +7,6 @@ local _config_file_name = ".nvim-rsync-build.lua"
 M.defaults = {
   default_rsync_options = {
     "-rlzi",
-    "--delete",
     "--checksum",
     "--exclude",
     ".git",
