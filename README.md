@@ -4,6 +4,9 @@
 
 It uses `rsync` to synchronize files and support flexible build commands.
 
+**NOTE**:
+This plugin is a personal project, only basic features are implemented.
+
 # Basic Idea
 This plugin is inspired from my daily workflow. I always open 3 tmux windows, they are:
 1. the Neovim window, for editing the source code and uploading it to the remote server with `vim-arsync` plugin;
@@ -92,9 +95,6 @@ Optional fields are:
 Once the `upload_dir()` is bind to `<leader>l`, the `build` action can be triggered by `<leader>lo`, the `run` action can be triggered by `<leader>lj`, and the `build` then `run` action can be triggered by `<leader>li`.
 
 If there is no `actions` defined, the `<leader>l` will only upload the local files to the remote server.
-
-**NOTE**:
-This plugin is under early development, only basic features are implemented.
 
 # Related Works
 - [vim-arsync](https://github.com/KenN7/vim-arsync)
