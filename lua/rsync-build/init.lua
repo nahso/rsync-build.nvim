@@ -173,8 +173,21 @@ local function do_terminal_sequence(terminal_sequence, terminals)
     local term = terminals[name]
     if term_bufs[name] then
       -- first: commands
-      vim.cmd.split()
-      vim.api.nvim_set_current_buf(term_bufs[name].buf)
+      local windows = vim.api.nvim_list_wins()
+      local target_win = nil
+      for _, win in ipairs(windows) do
+        local current_buf = vim.api.nvim_win_get_buf(win)
+        if current_buf == term_bufs[name].buf then
+          target_win = win
+          break
+        end
+      end
+      if target_win ~= nil then
+        vim.api.nvim_set_current_win(target_win)
+      else
+        vim.cmd.split()
+        vim.api.nvim_set_current_buf(term_bufs[name].buf)
+      end
       vim.cmd("normal G")
 
       execute_cmds(term.commands, term_bufs[name])
