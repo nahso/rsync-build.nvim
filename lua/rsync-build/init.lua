@@ -6,7 +6,7 @@ local _config_file_name = ".nvim-rsync-build.lua"
 
 M.defaults = {
   default_rsync_options = {
-    "-rlzi",
+    "-vazr",
     "--exclude",
     ".git",
     "--exclude",
@@ -189,6 +189,7 @@ local function do_terminal_sequence(terminal_sequence, terminals)
         vim.api.nvim_set_current_buf(term_bufs[name].buf)
       end
       vim.cmd("normal G")
+      vim.cmd.wincmd("p")
 
       execute_cmds(term.commands, term_bufs[name])
       .next(function()
