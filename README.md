@@ -7,6 +7,13 @@ It uses `rsync` to synchronize files and support flexible build commands.
 **NOTE**:
 This plugin is a personal project, only basic features are implemented.
 
+TODO:
+
+- [ ] add support for tmux (for sharing terminal among neovim instances and preventing close the terminal when neovim exits)
+- [ ] add a `ensure` option to automatically `cd` to it before executing the `commands`
+- [ ] add a `run_only` option to only run the commands in the terminal, without uploading the files
+- [ ] add options that support `delete` sync, ignore dotfiles
+
 # Basic Idea
 This plugin is inspired from my daily workflow. I always open 3 tmux windows, they are:
 1. the Neovim window, for editing the source code and uploading it to the remote server with `vim-arsync` plugin;
