@@ -31,21 +31,21 @@ M.defaults = {
     ignoreDotFiles = true,
     terminals = {
       build = {
-        initial_commands = {
+        initialCommands = {
           "ssh fugaku",
         },
+        ensureDir = "<path>",
         commands = {
-          "cd <path>",
           "make -j",
         },
       },
       run = {
-        initial_commands = {
+        initialCommands = {
           "ssh fugaku",
           "cd <path>",
         },
+        ensureDir = "<path>",
         commands = {
-          "cd <path>",
           "mpirun ./<exec>"
         }
       },
@@ -237,8 +237,8 @@ local function do_terminal_sequence(terminal_sequence, terminals)
       term_bufs[name] = { chan = vim.bo.channel, buf = vim.api.nvim_get_current_buf(), name = "TERMINAL:" .. name }
       vim.api.nvim_buf_set_name(term_bufs[name].buf, term_bufs[name].name)
       vim.cmd.wincmd("p")
-      -- first: initial_commands
-      execute_cmds(term.initial_commands, term_bufs[name])
+      -- first: initialCommands
+      execute_cmds(term.initialCommands, term_bufs[name])
       .next(function()
         -- then: commands
         execute_cmds(term.commands, term_bufs[name])
@@ -343,6 +343,15 @@ local function parse_config()
       vim.log.levels.ERROR, {}
     )
     return nil
+  end
+
+  -- if ensureDir is in a terminal, then insert a command to commands
+  if config.terminals ~= nil then
+    for _, term in pairs(config.terminals) do
+      if term.ensureDir ~= nil then
+        table.insert(term.commands, 1, "[ $PWD = '" .. term.ensureDir .. "' ] || cd " .. term.ensureDir)
+      end
+    end
   end
 
   if config.actions ~= nil then
