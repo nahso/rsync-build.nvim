@@ -163,6 +163,14 @@ local function focus_terminal(term)
   return false
 end
 
+local function clear_invalid_terminals()
+  for name, term in pairs(term_bufs) do
+    if not vim.api.nvim_buf_is_valid(term.buf) then
+      term_bufs[name] = nil
+    end
+  end
+end
+
 local function do_terminal_sequence(terminal_sequence, terminals)
   local function execute_all(seqi)
     if seqi > #terminal_sequence then
@@ -232,6 +240,7 @@ local function do_terminal_sequence(terminal_sequence, terminals)
     end
   end
 
+  clear_invalid_terminals()
   execute_all(1)
 end
 
