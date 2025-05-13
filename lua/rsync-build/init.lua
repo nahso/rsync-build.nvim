@@ -31,16 +31,34 @@ M.defaults = {
     terminals = {
       build = {
         initial_commands = {
-          "cd <path>",
+          "ssh fugaku",
         },
         commands = {
+          "cd <path>",
           "make -j",
         },
       },
+      run = {
+        initial_commands = {
+          "ssh fugaku",
+          "cd <path>",
+        },
+        commands = {
+          "cd <path>",
+          "mpirun ./<exec>"
+        }
+      },
     },
     actions = {
+      l = {
+        "build",
+      },
       o = {
         "build",
+        "run",
+      },
+      i = {
+        "run",
       },
     },
   }]]
