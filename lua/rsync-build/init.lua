@@ -28,6 +28,7 @@ M.defaults = {
     excludedPaths = {
       "build",
     },
+    ignoreDotFiles = true,
     terminals = {
       build = {
         initial_commands = {
@@ -387,6 +388,9 @@ function M.upload_dir(callback)
     else
       cmd = cmd .. option .. " "
     end
+  end
+  if config.ignoreDotFiles then
+    cmd = cmd .. "--exclude '.*' "
   end
   if config.excludedPaths then
     for _, path in ipairs(config.excludedPaths) do
