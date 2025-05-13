@@ -573,6 +573,97 @@ function M.upload_dir(callback)
   end
 end
 
+function M.do_action()
+  local config = parse_config()
+  if not config then
+    return
+  end
+
+  if config.actions then
+    local lines = {}
+    table.insert(lines, "Defined keybindings:")
+
+    local sorted_keys = {}
+    for keybinding, _ in pairs(config.actions) do
+      table.insert(sorted_keys, keybinding)
+    end
+    table.sort(sorted_keys)
+
+    for _, item in ipairs(sorted_keys) do
+      local keybinding = item
+      local action = config.actions[keybinding]
+
+      local desc = ""
+      for i=1, #action do
+        if i < #action then
+          desc = desc .. action[i] .. " -> "
+        else
+          desc = desc .. action[i]
+        end
+      end
+      table.insert(lines, string.format("  %s : %s", keybinding, desc))
+    end
+
+    local current_win = vim.api.nvim_get_current_win()
+    local win_width = vim.api.nvim_win_get_width(current_win)
+    local editor_height = vim.o.lines
+
+    local content_height = #lines
+    local float_height = math.min(content_height, editor_height - 2)
+
+    -- 2 = 2 * top/bottom border(1)
+    -- 1 = status line height
+    local extra_rows = 2 + vim.o.cmdheight + 1
+    local float_row = editor_height - float_height - extra_rows
+    local float_col = win_width
+
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
+    vim.api.nvim_buf_set_option(buf, 'swapfile', false)
+    vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
+    vim.api.nvim_buf_set_option(buf, 'modifiable', false)
+
+    local win_opts = {
+      relative = 'editor',
+      -- size:
+      width = win_width,
+      height = float_height,
+      -- position:
+      row = float_row,
+      col = win_width,
+
+      style = 'minimal',
+      border = 'single',
+      focusable = true,
+      noautocmd = true
+    }
+    local win = vim.api.nvim_open_win(buf, true, win_opts)
+    vim.api.nvim_win_set_option(win, 'winhl', 'Normal:NormalFloat,FloatBorder:FloatBorder')
+    vim.api.nvim_win_set_option(win, 'cursorline', false)
+    vim.api.nvim_win_set_option(win, 'number', false)
+    vim.api.nvim_win_set_option(win, 'relativenumber', false)
+    vim.api.nvim_win_set_option(win, 'signcolumn', 'no')
+    vim.api.nvim_win_set_option(win, 'foldcolumn', '0')
+
+    -- Close window with <Esc>
+    vim.keymap.set('n', '<Esc>', function()
+      vim.api.nvim_win_close(win, true)
+    end, { buffer = buf, nowait = true })
+    -- Close window with 'q'
+    vim.keymap.set('n', 'q', function()
+      vim.api.nvim_win_close(win, true)
+    end, { buffer = buf, nowait = true })
+
+    for keybinding, action in pairs(config.actions) do
+      vim.keymap.set('n', keybinding, function()
+        vim.api.nvim_win_close(win, true)
+        do_terminal_sequence(action, config.terminals)
+      end, { buffer = buf, nowait = true })
+    end
+  end
+end
+
 function M.setup(opts)
   M.opts = setmetatable(opts or {}, {__index = M.defaults})
   vim.api.nvim_create_user_command("TransferInit", generate_config, {})
