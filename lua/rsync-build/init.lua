@@ -212,7 +212,7 @@ local function do_terminal_sequence(terminal_sequence, terminals)
       if target_win ~= nil then
         vim.api.nvim_set_current_win(target_win)
       else
-        vim.cmd.split()
+        vim.cmd("10split")
         vim.api.nvim_set_current_buf(term_bufs[name].buf)
       end
       vim.cmd("normal G")
@@ -230,7 +230,7 @@ local function do_terminal_sequence(terminal_sequence, terminals)
         vim.notify("Error: " .. err, vim.log.levels.ERROR)
       end)
     else
-      vim.cmd.split()
+      vim.cmd("10split")
       vim.cmd.terminal()
       vim.cmd("normal G")
 
