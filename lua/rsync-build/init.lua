@@ -351,6 +351,12 @@ local function parse_config()
       if term.ensureDir ~= nil then
         table.insert(term.commands, 1, "[ $PWD = '" .. term.ensureDir .. "' ] || cd " .. term.ensureDir)
       end
+      if term.initialCommands == nil then
+        term.initialCommands = {}
+      end
+      if term.commands == nil then
+        term.commands = {}
+      end
     end
   end
 
